@@ -25,7 +25,7 @@ namespace RatesApi
 
             _serviceProvider = new ServiceCollection()
             .Configure<Settings>(_configuration)
-            .AddLogging()
+            .AddLogging()            
             .AddSingleton<IBaseClient, BaseClient>()
             .AddSingleton<ICurrencyRatesService, CurrencyRatesService>()
             .AddSingleton<IConverterService, ConverterService>()
@@ -36,8 +36,9 @@ namespace RatesApi
         }
         public async Task Start()
         {
-            await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromFirstSource();
-            await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromSecondSource();
+            //await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromFirstSource();
+            //await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromSecondSource();
+            await _serviceProvider.GetService<IRabbitApiService>().M();
 
             var Timer = new System.Timers.Timer(30000);
 

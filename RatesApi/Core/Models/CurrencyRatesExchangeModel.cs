@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Marvelous.Contracts.ExchangeModels
 {
-    public class CurrencyRatesExchangeModel
+    public interface ICurrencyRatesExchangeModel
     {
         public Dictionary<string, decimal> Rates { get; set; }
     }

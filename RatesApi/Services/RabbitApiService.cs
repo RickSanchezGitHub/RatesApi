@@ -1,5 +1,8 @@
 ﻿using Marvelous.Contracts.ExchangeModels;
 using MassTransit;
+using Microsoft.Extensions.Logging;
+using NLog;
+using RatesApi.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +13,20 @@ namespace RatesApi.Services
 {
     public class RabbitApiService : IRabbitApiService
     {
-        private CurrencyRatesService _currencyRatesService;
+        private ICurrencyRatesService _currencyRatesService;
+        private Logger _logger = LogManager.GetCurrentClassLogger();
+        public RabbitApiService(ICurrencyRatesService currencyRatesService)
+        {
+            _currencyRatesService = currencyRatesService;
+        }
         public async Task M()
         {
-            var busControl = Bus.Factory.CreateUsingRabbitMq(chg =>
+            var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
-                chg.Host("rabbitmq://80.78.240.16", hst =>
+                cfg.Host("rabbitmq://80.78.240.16", h =>
                 {
-                    hst.Username("nafanya");
-                    hst.Password("qwe!23");
+                    h.Username("nafanya");
+                    h.Password("qwe!23");
                 });
             });
 
@@ -28,21 +36,21 @@ namespace RatesApi.Services
 
             try
             {
-                Dictionary<string, decimal>? value = await _currencyRatesService.GetDataFromFirstSource();
-                await busControl.Publish<CurrencyRatesExchangeModel>(new CurrencyRatesExchangeModel
+                var value = await _currencyRatesService.GetDataFromFirstSource();
+                await busControl.Publish<ICurrencyRatesExchangeModel>(new 
                 {
                     Rates = value
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                _logger.Error("отправка сообщения не удалась", ex);
+                throw new Exception();
             }
             finally
             {
                 await busControl.StopAsync();
             }
-        }
+        }      
     }
 }
