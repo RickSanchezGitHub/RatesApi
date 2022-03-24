@@ -29,6 +29,7 @@ namespace RatesApi
             .AddSingleton<IBaseClient, BaseClient>()
             .AddSingleton<ICurrencyRatesService, CurrencyRatesService>()
             .AddSingleton<IConverterService, ConverterService>()
+            .AddSingleton<IRabbitApiService, RabbitApiService>()
             .BuildServiceProvider();
             LogerConfig.ConfigureNlog();
             _logger.Info("Программа запущена");
