@@ -14,6 +14,7 @@ namespace RatesApi.Services
     public class RabbitApiService : IRabbitApiService
     {
         private ICurrencyRatesService _currencyRatesService;
+        private const int timeOut = 5000;
         private Logger _logger = LogManager.GetCurrentClassLogger();
         public RabbitApiService(ICurrencyRatesService currencyRatesService)
         {
@@ -37,19 +38,20 @@ namespace RatesApi.Services
             try
             {
                 var value = await _currencyRatesService.GetDataFromFirstSource();
-                if (value == null)
+                if (!_currencyRatesService.GetDataFromFirstSource().Wait(timeOut))
                 {
                     value = await _currencyRatesService.GetDataFromSecondSource();
                 }
+
                 await busControl.Publish<ICurrencyRatesExchangeModel>(new 
                 {
                     Rates = value
                 });
-                _logger.Debug("Успешная отправка сообщения");
+                _logger.Debug("send message");
             }
             catch (Exception ex)
             {
-                _logger.Error("отправка сообщения не удалась", ex);
+                _logger.Error("Sending the message failed", ex);
                 throw new Exception();
             }
             finally
