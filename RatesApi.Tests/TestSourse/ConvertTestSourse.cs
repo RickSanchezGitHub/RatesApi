@@ -13,12 +13,12 @@ namespace RatesApi.Tests.TestCaseSourse
         {
             Dictionary<string, decimal> testDataFirstSourse = new Dictionary<string, decimal>()
             {
-                {"USDRUB", (decimal)103.525047 },
+                {"USDRUB", (decimal)103.5250 },
                 {"USDEUR", (decimal)0.9029 },
-                {"USDJPY", (decimal)118.904013 },
-                {"USDCNY", (decimal)6.361596 },
+                {"USDJPY", (decimal)118.9040 },
+                {"USDCNY", (decimal)6.3616 },
                 {"USDTRY", (decimal)14.7871 },
-                {"USDRSD", (decimal)106.159878 },
+                {"USDRSD", (decimal)106.1599 },
             };
             return testDataFirstSourse;
         }
@@ -27,12 +27,12 @@ namespace RatesApi.Tests.TestCaseSourse
         {
             Dictionary<string, decimal> testDataFirstSourse = new Dictionary<string, decimal>()
             {
-                {"USDRUB", (decimal)103.12613 },
-                {"USDEUR", (decimal)0.90099},
-                {"USDJPY", (decimal)118.48888 },
-                {"USDCNY", (decimal)6.34711},
-                {"USDTRY", (decimal)14.71872 },
-                {"USDRSD", (decimal)106.00167 },
+                {"USDRUB", (decimal)103.1261 },
+                {"USDEUR", (decimal)0.9010},
+                {"USDJPY", (decimal)118.4889 },
+                {"USDCNY", (decimal)6.3471},
+                {"USDTRY", (decimal)14.7187 },
+                {"USDRSD", (decimal)106.0017 },
             };
             return testDataFirstSourse;
         }

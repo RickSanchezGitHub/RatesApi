@@ -39,6 +39,7 @@ namespace RatesApi
             //await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromFirstSource();
             //await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromSecondSource();
             await _serviceProvider.GetService<IRabbitApiService>().SendMassegeRabbitService();
+            await _serviceProvider.GetService<IRabbitApiService>().SendMassegeRabbitService1();
 
             var Timer = new System.Timers.Timer(30000);
 
