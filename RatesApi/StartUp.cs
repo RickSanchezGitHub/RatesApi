@@ -38,7 +38,7 @@ namespace RatesApi
         {
             //await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromFirstSource();
             //await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromSecondSource();
-            await _serviceProvider.GetService<IRabbitApiService>().M();
+            await _serviceProvider.GetService<IRabbitApiService>().SendMassegeRabbitService();
 
             var Timer = new System.Timers.Timer(30000);
 
@@ -53,8 +53,7 @@ namespace RatesApi
 
         private async void SendMsg(Object source, ElapsedEventArgs a)
         {
-            await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromFirstSource();
-            await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromSecondSource();
+            await _serviceProvider.GetService<IRabbitApiService>().SendMassegeRabbitService();
         }
     }
 }

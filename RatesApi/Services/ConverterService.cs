@@ -72,7 +72,7 @@ namespace RatesApi.Services
                 {
                     if (currency.Key == reqCurrency)
                     {
-                        reqCurrencies.Add(currency.Key, currency.Value);
+                        reqCurrencies.Add(currency.Key, Decimal.Round(currency.Value, 4));
                     }
                 }
             }

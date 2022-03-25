@@ -19,7 +19,7 @@ namespace RatesApi.Services
         {
             _currencyRatesService = currencyRatesService;
         }
-        public async Task M()
+        public async Task SendMassegeRabbitService()
         {
             var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
