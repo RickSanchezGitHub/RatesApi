@@ -32,29 +32,26 @@ namespace RatesApi
             .AddSingleton<IRabbitApiService, RabbitApiService>()
             .BuildServiceProvider();
             LogerConfig.ConfigureNlog();
-            _logger.Info("Программа запущена");
+            _logger.Info("The programm is started");
         }
         public async Task Start()
-        {
-            //await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromFirstSource();
-            //await _serviceProvider.GetService<ICurrencyRatesService>().GetDataFromSecondSource();
-            await _serviceProvider.GetService<IRabbitApiService>().SendMassegeRabbitService();
-            await _serviceProvider.GetService<IRabbitApiService>().SendMassegeRabbitService1();
+        {           
+            await _serviceProvider.GetService<IRabbitApiService>().SendMessageRabbitService();
 
             var Timer = new System.Timers.Timer(30000);
 
             Timer.AutoReset = true;
             Timer.Enabled = true;
 
-            Timer.Elapsed += new ElapsedEventHandler(SendMsg);
+            Timer.Elapsed += new ElapsedEventHandler(SendMessage);
 
             Timer.Start();
-            _logger.Info("Таймер запущен");
+            _logger.Info("The timer is started");
         }
 
-        private async void SendMsg(Object source, ElapsedEventArgs a)
+        private async void SendMessage(Object source, ElapsedEventArgs a)
         {
-            await _serviceProvider.GetService<IRabbitApiService>().SendMassegeRabbitService();
+            await _serviceProvider.GetService<IRabbitApiService>().SendMessageRabbitService();
         }
     }
 }

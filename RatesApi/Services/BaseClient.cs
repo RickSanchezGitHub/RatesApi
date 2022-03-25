@@ -20,12 +20,12 @@ namespace RatesApi.Services
                 var request = new RestRequest();
                 var response = await client.GetAsync(request);
                 JObject json = JObject.Parse(response.Content);
-
+                _logger.Debug("Received a responce from the sourse");
                 return json;
             }
             catch (Exception ex)
             {
-                _logger.Error("Не удалость получить ответ из источника", ex);
+                _logger.Error("No reseived a responce from the sourse", ex);
                 throw new Exception();
             }
         }

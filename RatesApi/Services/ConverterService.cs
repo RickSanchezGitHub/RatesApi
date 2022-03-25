@@ -27,13 +27,13 @@ namespace RatesApi.Services
 
                 var currencys = SelectionCurrency(result);
 
-                _logger.Debug("Успешная конвертация основного источника");
+                _logger.Debug("Successful conversion of the main sourse");
 
                 return currencys;
             }
             catch (Exception ex)
             {
-                _logger.Error("Не удалось конвектировать первый источник", ex);
+                _logger.Error("Failed to convert the main source", ex);
                 throw new NullReferenceException("Object reference not set to an instance of an object.");
             }
         }
@@ -49,7 +49,7 @@ namespace RatesApi.Services
                     CurrencyValue = s.Children().Values("value").FirstOrDefault()
                 }).ToDictionary(k => "USD" + k.CurrencyName, k => Convert.ToDecimal(k.CurrencyValue));
 
-                _logger.Info("Успешная конвертация второстепенного источника");
+                _logger.Info("Successful conversion of the secondary sourse");
 
                 var currencys = SelectionCurrency(result);
 
@@ -57,7 +57,7 @@ namespace RatesApi.Services
             }
             catch (Exception ex)
             {
-                _logger.Error("Не удалось конвектировать первый источник", ex);
+                _logger.Error("Failed to convert the secondary source", ex);
                 throw new NullReferenceException("Object reference not set to an instance of an object.");
             }
         }
@@ -72,11 +72,11 @@ namespace RatesApi.Services
                 {
                     if (currency.Key == reqCurrency)
                     {
-                        reqCurrencies.Add(currency.Key, Decimal.Round(currency.Value, 4));
+                        reqCurrencies.Add(currency.Key, Decimal.Round(currency.Value, 2));
                     }
                 }
             }
-            _logger.Debug("получен итоговый список валютных пар");
+            _logger.Debug("The final list of currency pairs has been obtained");
             return reqCurrencies;
         }
     }

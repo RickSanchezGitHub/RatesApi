@@ -32,24 +32,16 @@ namespace RatesApi.Services
         public async Task<Dictionary<string, decimal>> GetDataFromFirstSource()
         {
             var json = await _baseClient.GetResponseSourse(_firstServiceUrl);
-            _logger.Debug("ответ из первого источника получен");
+            _logger.Debug("Received a responce from the main sourse");
             var currencies = _converterService.ConvertToDictionaryFirstSource(json);                
-            foreach (var cyrrency in currencies)
-            {
-               _logger.Info($"{cyrrency.Key} {cyrrency.Value.ToString()}");                
-            }
             return currencies;
         }
 
         public async Task<Dictionary<string, decimal>> GetDataFromSecondSource()
         {
             var json = await _baseClient.GetResponseSourse(_secondServiceUrl);                
-            _logger.Debug("ответ со второного источника получен");
+            _logger.Debug("Received a responce from the secondary sourse");
             var currencies = _converterService.ConvertToDictionarySecondSource(json);
-            foreach (var cyrrency in currencies)
-            {
-                _logger.Info($"{cyrrency.Key} {cyrrency.Value.ToString()}");
-            }
             return currencies;
         }
     }
