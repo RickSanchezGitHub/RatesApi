@@ -13,9 +13,11 @@ namespace RatesApi.Services
 {
     public class RabbitApiService : IRabbitApiService
     {
-        private ICurrencyRatesService _currencyRatesService;
         private const int timeOut = 5000;
+        private Dictionary<string, decimal> _currencyRates;
+        private ICurrencyRatesService _currencyRatesService;
         private Logger _logger = LogManager.GetCurrentClassLogger();
+
         public RabbitApiService(ICurrencyRatesService currencyRatesService)
         {
             _currencyRatesService = currencyRatesService;
@@ -37,16 +39,20 @@ namespace RatesApi.Services
 
             try
             {
-                var value = await _currencyRatesService.GetDataFromFirstSource();
-                if (!_currencyRatesService.GetDataFromFirstSource().Wait(timeOut))
+                if (_currencyRatesService.GetDataFromFirstSource().Wait(timeOut))
                 {
-                    value = await _currencyRatesService.GetDataFromSecondSource();
+                    _currencyRates = await _currencyRatesService.GetDataFromFirstSource();
+                }
+                else
+                {
+                    _currencyRates = await _currencyRatesService.GetDataFromSecondSource();
                 }
 
-                await busControl.Publish<ICurrencyRatesExchangeModel>(new 
+                await busControl.Publish<ICurrencyRatesExchangeModel>(new
                 {
-                    Rates = value
+                    Rates = _currencyRates
                 });
+
                 _logger.Debug("send message");
             }
             catch (Exception ex)
