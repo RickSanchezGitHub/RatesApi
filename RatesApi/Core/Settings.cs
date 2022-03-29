@@ -10,5 +10,6 @@ namespace RatesApi.Core
     {
         public string UrlFirstService { get; set; }
         public string UrlSecondService { get; set; }
+        public string CurrencyBase { get; set; }
     }
 }

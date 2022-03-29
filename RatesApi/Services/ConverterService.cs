@@ -14,6 +14,11 @@ namespace RatesApi.Services
     public class ConverterService : IConverterService
     {
         private Logger _logger = LogManager.GetCurrentClassLogger();
+        private RequiredCurrencies _currencies;
+        public ConverterService(RequiredCurrencies currencies)
+        {
+            _currencies = currencies;
+        }
         public Dictionary<string, decimal> ConvertToDictionaryFirstSource(JObject json)
         {
             try
@@ -64,9 +69,10 @@ namespace RatesApi.Services
 
         private Dictionary<string, decimal> SelectionCurrency(Dictionary<string, decimal> currencys)
         {
+            var currencyPairs = _currencies.GetCurrenciesPairs();
             var reqCurrencies = new Dictionary<string, decimal>();
 
-            foreach (var reqCurrency in RequiredCurrencies.CurrencyPairs)
+            foreach (var reqCurrency in currencyPairs)
             {
                 foreach (var currency in currencys)
                 {
