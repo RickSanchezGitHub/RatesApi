@@ -16,10 +16,13 @@ namespace RatesApi.Services
         private ICurrencyRatesService _currencyRatesService;
         private const int timeOut = 5000;
         private Logger _logger = LogManager.GetCurrentClassLogger();
+        private Dictionary<string, decimal> _currencyRates;
+
         public RabbitApiService(ICurrencyRatesService currencyRatesService)
         {
             _currencyRatesService = currencyRatesService;
         }
+
         public async Task SendMessageRabbitService()
         {
             var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
@@ -37,15 +40,19 @@ namespace RatesApi.Services
 
             try
             {
-                var value = await _currencyRatesService.GetDataFromFirstSource();
                 if (!_currencyRatesService.GetDataFromFirstSource().Wait(timeOut))
                 {
-                    value = await _currencyRatesService.GetDataFromSecondSource();
+                    _currencyRates = await _currencyRatesService.GetDataFromSecondSource();
+                }
+                else
+                {
+                    _currencyRates = await _currencyRatesService.GetDataFromFirstSource();
+
                 }
 
                 await busControl.Publish<ICurrencyRatesExchangeModel>(new 
                 {
-                    Rates = value
+                    Rates = _currencyRates
                 });
                 _logger.Debug("send message");
             }

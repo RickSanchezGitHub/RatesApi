@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using RatesApi.Services.Interface;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Options;
+using RatesApi.Core;
 
 namespace RatesApi.Tests
 {
@@ -16,11 +18,13 @@ namespace RatesApi.Tests
     {
         private IConverterService _convertService;
         private ConvertTestSourse _convertTestSourse;
+        private RequiredCurrencies _currencies;
+
 
         [SetUp]
         public void Setup()
         {
-            _convertService = new ConverterService();
+            _convertService = new ConverterService(_currencies);
             _convertTestSourse = new ConvertTestSourse();
         }
 
