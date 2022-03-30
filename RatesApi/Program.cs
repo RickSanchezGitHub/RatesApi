@@ -7,10 +7,10 @@ using System.Runtime.InteropServices;
 
 class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var startUp = new StartUp();
-        startUp.Start();
+        startUp.Start().Wait();
         Console.ReadKey();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using NLog;
 using RatesApi.Core;
 using RatesApi.Services.Interface;
@@ -15,9 +16,9 @@ namespace RatesApi.Services
     {
         private Logger _logger = LogManager.GetCurrentClassLogger();
         private RequiredCurrencies _currencies;
-        public ConverterService(RequiredCurrencies currencies)
+        public ConverterService(IOptions<Settings> options)
         {
-            _currencies = currencies;
+            _currencies = new RequiredCurrencies(options);
         }
         public Dictionary<string, decimal> ConvertToDictionaryFirstSource(JObject json)
         {

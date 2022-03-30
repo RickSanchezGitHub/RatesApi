@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RatesApi": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}
