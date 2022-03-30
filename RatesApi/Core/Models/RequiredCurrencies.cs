@@ -7,41 +7,26 @@ using System.Threading.Tasks;
 
 namespace RatesApi.Core
 {
-    public class RequiredCurrencies
-    {        
-        private readonly string _currencyBase; 
+    public class RequiredCurrencies : IRequiredCurrencies
+    {
+        private readonly string _currencyBase;
+        private readonly List<string> _currencies;
         public RequiredCurrencies(IOptions<Settings> options)
         {
             _currencyBase = options.Value.CurrencyBase;
+            _currencies = options.Value.Currencies;
         }
         public List<string> GetCurrenciesPairs()
         {
             List<string> currencyPairs = new List<string>();
-            foreach (var item in Currencies)
+            foreach (var item in _currencies)
             {
-                if(item != _currencyBase)
+                if (item != _currencyBase)
                 {
                     currencyPairs.Add(_currencyBase + item);
                 }
             }
             return currencyPairs;
         }
-        private static List<string> Currencies = new List<string>
-        {
-            //"RUB",
-            //"USD",
-            //"EUR",
-            //"JPY",
-            //"CNY",
-            //"TRY",
-            //"RSD",
-            $"{Marvelous.Contracts.Enums.Currency.RUB}",
-            $"{Marvelous.Contracts.Enums.Currency.USD}",
-            $"{Marvelous.Contracts.Enums.Currency.EUR}",
-            $"{Marvelous.Contracts.Enums.Currency.JPY}",
-            $"{Marvelous.Contracts.Enums.Currency.CNY}",
-            $"{Marvelous.Contracts.Enums.Currency.TRY}",
-            $"{Marvelous.Contracts.Enums.Currency.RSD}",
-        };
     }
 }

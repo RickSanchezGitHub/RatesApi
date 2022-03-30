@@ -18,13 +18,13 @@ namespace RatesApi.Tests
     {
         private IConverterService _convertService;
         private ConvertTestSourse _convertTestSourse;
-        private RequiredCurrencies _currencies;
+        private Mock<IRequiredCurrencies> _currencies;
 
 
         [SetUp]
         public void Setup()
         {
-            _convertService = new ConverterService(_currencies);
+            _convertService = new ConverterService(_currencies.Object);
             _convertTestSourse = new ConvertTestSourse();
         }
 

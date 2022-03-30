@@ -15,10 +15,10 @@ namespace RatesApi.Services
     public class ConverterService : IConverterService
     {
         private Logger _logger = LogManager.GetCurrentClassLogger();
-        private RequiredCurrencies _currencies;
-        public ConverterService(IOptions<Settings> options)
+        private IRequiredCurrencies _currencies;
+        public ConverterService(IRequiredCurrencies requiredCurrencies)
         {
-            _currencies = new RequiredCurrencies(options);
+            _currencies = requiredCurrencies;
         }
         public Dictionary<string, decimal> ConvertToDictionaryFirstSource(JObject json)
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using NLog;
 using RatesApi.Core;
 using RatesApi.Services;
@@ -17,25 +18,29 @@ namespace RatesApi
 
         public StartUp()
         {
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables();
             _configuration = builder.Build();
-                
+
+            var environment = Environment.GetEnvironmentVariable("LOG_DIRECTORY");
 
             _serviceProvider = new ServiceCollection()
             .Configure<Settings>(_configuration)
-            .AddLogging()            
+            .AddLogging()
             .AddSingleton<IBaseClient, BaseClient>()
             .AddSingleton<ICurrencyRatesService, CurrencyRatesService>()
             .AddSingleton<IConverterService, ConverterService>()
             .AddSingleton<IRabbitApiService, RabbitApiService>()
+            .AddSingleton<IRequiredCurrencies, RequiredCurrencies>()
             .BuildServiceProvider();
             LogerConfig.ConfigureNlog();
-            _logger.Info("The programm is started");
+            _logger.Info("The program is started");
         }
         public async Task Start()
-        {           
+        { 
             await _serviceProvider.GetService<IRabbitApiService>().SendMessageRabbitService();
 
             var Timer = new System.Timers.Timer(30000);
