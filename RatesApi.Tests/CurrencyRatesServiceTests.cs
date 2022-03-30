@@ -41,7 +41,7 @@ namespace RatesApi.Tests
             _baseClientMock.Setup(c => c.GetResponseSourse(It.IsAny<string>())).Returns(Task.FromResult(client));
             _converterService.Setup(c => c.ConvertToDictionaryFirstSource(It.IsAny<JObject>())).Returns(expected);
 
-            var actual = _currencyRatesService.GetDataFromFirstSource();
+            var actual = _currencyRatesService.GetDataFromSecondSource();
 
             Assert.IsNotNull(actual);
             Assert.AreEqual(expected.Keys, actual.Result.Keys);
@@ -59,7 +59,7 @@ namespace RatesApi.Tests
             _baseClientMock.Setup(c => c.GetResponseSourse(It.IsAny<string>())).Returns(Task.FromResult(client));
             _converterService.Setup(c => c.ConvertToDictionarySecondSource(It.IsAny<JObject>())).Returns(expected);
 
-            var actual = _currencyRatesService.GetDataFromSecondSource();
+            var actual = _currencyRatesService.GetDataFromFirstSource();
 
             Assert.IsNotNull(actual);
             Assert.AreEqual(expected.Keys, actual.Result.Keys);
