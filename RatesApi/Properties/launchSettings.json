@@ -2,10 +2,10 @@
   "profiles": {
     "RatesApi": {
       "commandName": "Project",
+      "nativeDebugging": false,
       "environmentVariables": {
-        "LOG_DIRECTORY": "C:\\Users\\Alex\\Desktop\\Rick Sanchez\\РєРѕРЅ_С‡_РЅС‹Рµ РІРµСЂСЃРёРё\\RatesApi\\RatesApi\\bin\\Debug\\net6.0\\logs\\"
-      },
-      "nativeDebugging": false
+        "LOG_DIRECTORY": "C:/Users/Alex/Desktop/Rick Sanchez/кон_ч_ные версии/RatesApi/RatesApi/bin/Debug/net6.0/logs"
+      }
+      }
     }
-  }
 }

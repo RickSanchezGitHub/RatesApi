@@ -37,7 +37,7 @@ namespace RatesApi.Services
             var json = await _baseClient.GetResponseSourse(_secondServiceUrl);
             _logger.Debug("Received a responce from the main sourse");
             var currencies = _converterService.ConvertToDictionaryFirstSource(json);
-            return currencies;
+            return currencies;            
         }
 
         public async Task<Dictionary<string, decimal>> GetDataFromSecondSource()

@@ -7,6 +7,7 @@ using RatesApi.Services;
 using RatesApi.Services.Interface;
 using System.Reflection;
 using System.Timers;
+using Microsoft.Extensions.Logging;
 
 namespace RatesApi
 {
@@ -24,8 +25,6 @@ namespace RatesApi
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables();
             _configuration = builder.Build();
-
-            var environment = Environment.GetEnvironmentVariable("LOG_DIRECTORY");
 
             _serviceProvider = new ServiceCollection()
             .Configure<Settings>(_configuration)
