@@ -8,6 +8,7 @@ using RatesApi.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,7 +36,7 @@ namespace RatesApi.Services
         {
             var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
-                cfg.Host(_host, h =>
+                cfg.Host(new Uri(_host), h =>
                 {
                     h.Username(_userName);
                     h.Password(_password);
@@ -57,7 +58,8 @@ namespace RatesApi.Services
                     _currencyRates = await _currencyRatesService.GetDataFromFirstSource();
                 }
 
-                await busControl.Publish<ICurrencyRatesExchangeModel>(new 
+                var endpoint = await busControl.GetSendEndpoint(new Uri("rabbitmq://localhost/test"));
+                await endpoint.Send<ICurrencyRatesExchangeModel>(new 
                 {
                     Rates = _currencyRates
                 });
@@ -70,7 +72,7 @@ namespace RatesApi.Services
             }
             finally
             {
-                await busControl.StopAsync();
+                busControl.StopAsync();
             }
         }        
     }

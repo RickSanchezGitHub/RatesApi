@@ -8,6 +8,7 @@ using RatesApi.Services.Interface;
 using System.Reflection;
 using System.Timers;
 using Microsoft.Extensions.Logging;
+using MassTransit;
 
 namespace RatesApi
 {
@@ -24,11 +25,12 @@ namespace RatesApi
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables();
-            _configuration = builder.Build();
+            _configuration = builder.Build();         
 
             _serviceProvider = new ServiceCollection()
             .Configure<Settings>(_configuration)
             .AddLogging()
+            .AddMassTransit()
             .AddSingleton<IBaseClient, BaseClient>()
             .AddSingleton<ICurrencyRatesService, CurrencyRatesService>()
             .AddSingleton<IConverterService, ConverterService>()
@@ -36,8 +38,10 @@ namespace RatesApi
             .AddSingleton<IRequiredCurrencies, RequiredCurrencies>()
             .BuildServiceProvider();
             LogerConfig.ConfigureNlog();
+            
             _logger.Info("The program is started");
         }
+
         public async Task Start()
         { 
             await _serviceProvider.GetService<IRabbitApiService>().SendMessageRabbitService();
