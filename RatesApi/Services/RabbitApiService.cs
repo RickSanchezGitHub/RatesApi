@@ -11,15 +11,15 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace RatesApi.Services
 {
     public class RabbitApiService : IRabbitApiService
     {
-        private const int timeOut = 5000;
-        private readonly string _host;
-        private readonly string _userName;
-        private readonly string _password;
+        private readonly System.Timers.Timer _timer;
+        private readonly IBusControl _busControl;
+        private readonly CancellationTokenSource _sourse;
         private ICurrencyRatesService _currencyRatesService;
         private Logger _logger = LogManager.GetCurrentClassLogger();
         private Dictionary<string, decimal> _currencyRates;
@@ -27,39 +27,35 @@ namespace RatesApi.Services
         public RabbitApiService(ICurrencyRatesService currencyRatesService, IOptions<Settings> options)
         {
             _currencyRatesService = currencyRatesService;
-            _host = options.Value.Host;
-            _userName = options.Value.Login;
-            _password = options.Value.Password;
+
+            _busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
+            {
+                cfg.Host(new Uri(options.Value.Host), h =>
+                {
+                    h.Username(options.Value.Login);
+                    h.Password(options.Value.Password);
+                });
+            });
+            _sourse = new CancellationTokenSource(TimeSpan.FromSeconds(options.Value.TimeOut));
+
+            _timer = new System.Timers.Timer(options.Value.TimerInterval);
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
+            _timer.Elapsed += new ElapsedEventHandler(SendMessage);
+            _timer.Start();
+
+            _logger.Info("The timer is started");
         }
 
         public async Task SendMessageRabbitService()
         {
-            var busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
-            {
-                cfg.Host(new Uri(_host), h =>
-                {
-                    h.Username(_userName);
-                    h.Password(_password);
-                });
-            });
-
-            var source = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-
-            await busControl.StartAsync(source.Token);
+            await _busControl.StartAsync(_sourse.Token);
 
             try
             {
-                if (!_currencyRatesService.GetDataFromFirstSource().Wait(timeOut))
-                {
-                    _currencyRates = await _currencyRatesService.GetDataFromSecondSource();
-                }
-                else
-                {
-                    _currencyRates = await _currencyRatesService.GetDataFromFirstSource();
-                }
+                _currencyRates = await _currencyRatesService.GetDataFromFirstSource();               
 
-                var endpoint = await busControl.GetSendEndpoint(new Uri("rabbitmq://localhost/test"));
-                await endpoint.Send<ICurrencyRatesExchangeModel>(new 
+                await _busControl.Publish<ICurrencyRatesExchangeModel>(new
                 {
                     Rates = _currencyRates
                 });
@@ -72,8 +68,13 @@ namespace RatesApi.Services
             }
             finally
             {
-                busControl.StopAsync();
+                _busControl.StopAsync();
             }
-        }        
+        }
+
+        private async void SendMessage(Object source, ElapsedEventArgs a)
+        {
+            await SendMessageRabbitService();
+        }
     }
 }

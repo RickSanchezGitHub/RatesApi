@@ -20,46 +20,27 @@ namespace RatesApi
 
         public StartUp()
         {
-
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables();
-            _configuration = builder.Build();         
+            _configuration = builder.Build();
 
             _serviceProvider = new ServiceCollection()
             .Configure<Settings>(_configuration)
             .AddLogging()
             .AddMassTransit()
-            .AddSingleton<IBaseClient, BaseClient>()
-            .AddSingleton<ICurrencyRatesService, CurrencyRatesService>()
-            .AddSingleton<IConverterService, ConverterService>()
-            .AddSingleton<IRabbitApiService, RabbitApiService>()
-            .AddSingleton<IRequiredCurrencies, RequiredCurrencies>()
+            .RegistrationService()
             .BuildServiceProvider();
+
             LogerConfig.ConfigureNlog();
-            
+
             _logger.Info("The program is started");
         }
 
         public async Task Start()
         { 
-            await _serviceProvider.GetService<IRabbitApiService>().SendMessageRabbitService();
-
-            var Timer = new System.Timers.Timer(30000);
-
-            Timer.AutoReset = true;
-            Timer.Enabled = true;
-
-            Timer.Elapsed += new ElapsedEventHandler(SendMessage);
-
-            Timer.Start();
-            _logger.Info("The timer is started");
-        }
-
-        private async void SendMessage(Object source, ElapsedEventArgs a)
-        {
-            await _serviceProvider.GetService<IRabbitApiService>().SendMessageRabbitService();
+            await _serviceProvider.GetService<IRabbitApiService>().SendMessageRabbitService();           
         }
     }
 }
