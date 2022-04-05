@@ -20,7 +20,7 @@ namespace RatesApi.Services
         {
             _currencies = requiredCurrencies;
         }
-        public Dictionary<string, decimal> ConvertToDictionaryFirstSource(JObject json)
+        public Dictionary<string, decimal> ConvertToDictionarySecondSource(JObject json)
         {
             try
             {               
@@ -43,7 +43,7 @@ namespace RatesApi.Services
                 throw new NullReferenceException("Object reference not set to an instance of an object.");
             }
         }
-        public Dictionary<string, decimal> ConvertToDictionarySecondSource(JObject json)
+        public Dictionary<string, decimal> ConvertToDictionaryFirstSource(JObject json)
         {
             try
             {

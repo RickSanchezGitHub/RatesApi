@@ -4,7 +4,7 @@ using NLog;
 using RatesApi.Core;
 using RatesApi.Services.Interface;
 using RestSharp;
-
+using System.Net;
 
 namespace RatesApi.Services
 {
@@ -14,12 +14,16 @@ namespace RatesApi.Services
 
         public async Task<JObject> GetResponseSourse(string url)
         {
+            JObject json = null;
             try
             {
                 var client = new RestClient(url);
                 var request = new RestRequest();
                 var response = await client.GetAsync(request);
-                JObject json = JObject.Parse(response.Content);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    json = JObject.Parse(response.Content);
+                }            
                 _logger.Debug("Received a responce from the sourse");
                 return json;
             }

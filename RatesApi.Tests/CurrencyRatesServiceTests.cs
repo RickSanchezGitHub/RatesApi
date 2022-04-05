@@ -39,24 +39,6 @@ namespace RatesApi.Tests
             var expected = _currencyRatesServiceTestSourse.GetFirstOutputData();
             var client = _baseClientTestSourse.GetFirstSourseBaseClient();
             _baseClientMock.Setup(c => c.GetResponseSourse(It.IsAny<string>())).Returns(Task.FromResult(client));
-            _converterService.Setup(c => c.ConvertToDictionaryFirstSource(It.IsAny<JObject>())).Returns(expected);
-
-            var actual = _currencyRatesService.GetDataFromSecondSource();
-
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(expected.Keys, actual.Result.Keys);
-            Assert.AreEqual(expected.Values, actual.Result.Values);
-            Assert.Pass();
-            _baseClientMock.Verify(b => b.GetResponseSourse(It.IsAny<string>()), Times.Once());
-            _converterService.Verify(c => c.ConvertToDictionaryFirstSource(client), Times.Once());
-        }
-
-        [Test]
-        public void GetDataFromSecondSourceTest_ShouldReturnCurrencies()
-        {
-            var expected = _currencyRatesServiceTestSourse.GetSecondOutputData();
-            var client = _baseClientTestSourse.GetSecondSourseBaseClient();
-            _baseClientMock.Setup(c => c.GetResponseSourse(It.IsAny<string>())).Returns(Task.FromResult(client));
             _converterService.Setup(c => c.ConvertToDictionarySecondSource(It.IsAny<JObject>())).Returns(expected);
 
             var actual = _currencyRatesService.GetDataFromFirstSource();
@@ -67,6 +49,24 @@ namespace RatesApi.Tests
             Assert.Pass();
             _baseClientMock.Verify(b => b.GetResponseSourse(It.IsAny<string>()), Times.Once());
             _converterService.Verify(c => c.ConvertToDictionarySecondSource(client), Times.Once());
+        }
+
+        [Test]
+        public void GetDataFromSecondSourceTest_ShouldReturnCurrencies()
+        {
+            var expected = _currencyRatesServiceTestSourse.GetSecondOutputData();
+            var client = _baseClientTestSourse.GetSecondSourseBaseClient();
+            _baseClientMock.Setup(c => c.GetResponseSourse(It.IsAny<string>())).Returns(Task.FromResult(client));
+            _converterService.Setup(c => c.ConvertToDictionaryFirstSource(It.IsAny<JObject>())).Returns(expected);
+
+            var actual = _currencyRatesService.GetDataFromSecondSource();
+
+            Assert.IsNotNull(actual);
+            Assert.AreEqual(expected.Keys, actual.Result.Keys);
+            Assert.AreEqual(expected.Values, actual.Result.Values);
+            Assert.Pass();
+            _baseClientMock.Verify(b => b.GetResponseSourse(It.IsAny<string>()), Times.Once());
+            _converterService.Verify(c => c.ConvertToDictionaryFirstSource(client), Times.Once());
         }
     }
 }

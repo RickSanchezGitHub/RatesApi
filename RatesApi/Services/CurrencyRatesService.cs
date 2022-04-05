@@ -19,9 +19,7 @@ namespace RatesApi.Services
         private readonly string _firstServiceUrl;
         private readonly string _secondServiceUrl;
         private readonly string _currencyBase;
-        private readonly IBaseClient _baseClient;
-
-        
+        private readonly IBaseClient _baseClient;        
 
         public CurrencyRatesService(IOptions<Settings> options, IConverterService converterService, IBaseClient baseClient)
         {
@@ -34,20 +32,33 @@ namespace RatesApi.Services
 
         public async Task<Dictionary<string, decimal>> GetDataFromFirstSource()
         {
-            var json = await _baseClient.GetResponseSourse(_secondServiceUrl);
-            _logger.Debug("Received a responce from the main sourse");
-            var currencies = _converterService.ConvertToDictionaryFirstSource(json);
+            var json = await _baseClient.GetResponseSourse(_firstServiceUrl);
+            var currencies = await CheckJson(json);
             return currencies;
         }
 
         public async Task<Dictionary<string, decimal>> GetDataFromSecondSource()
         {
-            var json = await _baseClient.GetResponseSourse(_firstServiceUrl);
-            _logger.Debug("Received a responce from the secondary sourse");
-            var currencies = _converterService.ConvertToDictionarySecondSource(json);                
+            var json = await _baseClient.GetResponseSourse(_secondServiceUrl);
+            var currencies = await CheckJson(json);
             return currencies;
         }
-
         
+        private async Task<Dictionary<string, decimal>> CheckJson(JObject json)
+        {
+            var currencies = new Dictionary<string, decimal>();
+
+            if (json != null)
+            {
+                _logger.Debug("Received a responce from the sourse");
+                currencies = _converterService.ConvertToDictionaryFirstSource(json);
+            }
+            else
+            {
+                _logger.Error("Could not get data from sources");
+            }
+
+            return currencies;
+        }
     }
 }

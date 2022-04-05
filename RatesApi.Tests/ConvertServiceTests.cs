@@ -34,7 +34,7 @@ namespace RatesApi.Tests
             var testData = _convertTestSourse.GetJsonFirstData();
             var expected = _convertTestSourse.GetFirstOutputData();
 
-            var actual = _convertService.ConvertToDictionaryFirstSource(testData);
+            var actual = _convertService.ConvertToDictionarySecondSource(testData);
 
             Assert.AreEqual(expected, actual);
         }
@@ -44,7 +44,7 @@ namespace RatesApi.Tests
         {
             var testData = _convertTestSourse.GetJsonSecondData();
 
-            Assert.Throws<NullReferenceException>(() => _convertService.ConvertToDictionaryFirstSource(testData));
+            Assert.Throws<NullReferenceException>(() => _convertService.ConvertToDictionarySecondSource(testData));
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace RatesApi.Tests
             var testData = _convertTestSourse.GetJsonSecondData();
             var expected = _convertTestSourse.GetSecondOutputData();
 
-            var actual = _convertService.ConvertToDictionarySecondSource(testData);
+            var actual = _convertService.ConvertToDictionaryFirstSource(testData);
 
             Assert.AreEqual(expected, actual);
         }
@@ -63,7 +63,7 @@ namespace RatesApi.Tests
         {
             var testData = _convertTestSourse.GetJsonFirstData();
 
-            Assert.Throws<NullReferenceException>(() => _convertService.ConvertToDictionarySecondSource(testData));
+            Assert.Throws<NullReferenceException>(() => _convertService.ConvertToDictionaryFirstSource(testData));
         }
     }
 }
