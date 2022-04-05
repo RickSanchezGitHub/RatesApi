@@ -1,5 +1,4 @@
-﻿
-namespace RatesApi.Services
+﻿namespace RatesApi.Services.Interface
 {
     public interface IRabbitApiService
     {

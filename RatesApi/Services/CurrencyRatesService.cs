@@ -1,14 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Nancy.Json;
-using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using NLog;
 using RatesApi.Core;
 using RatesApi.Services.Interface;
-using RestSharp;
-using System.Net;
-using System.Text.Json.Nodes;
 
 namespace RatesApi.Services
 {
@@ -19,7 +13,7 @@ namespace RatesApi.Services
         private readonly string _firstServiceUrl;
         private readonly string _secondServiceUrl;
         private readonly string _currencyBase;
-        private readonly IBaseClient _baseClient;        
+        private readonly IBaseClient _baseClient;
 
         public CurrencyRatesService(IOptions<Settings> options, IConverterService converterService, IBaseClient baseClient)
         {
@@ -43,7 +37,7 @@ namespace RatesApi.Services
             var currencies = await CheckJson(json);
             return currencies;
         }
-        
+
         private async Task<Dictionary<string, decimal>> CheckJson(JObject json)
         {
             var currencies = new Dictionary<string, decimal>();

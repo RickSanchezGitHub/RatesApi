@@ -1,14 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MassTransit;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using NLog;
 using RatesApi.Core;
 using RatesApi.Services;
 using RatesApi.Services.Interface;
-using System.Reflection;
-using System.Timers;
-using Microsoft.Extensions.Logging;
-using MassTransit;
 
 namespace RatesApi
 {
@@ -32,15 +28,13 @@ namespace RatesApi
             .AddMassTransit()
             .RegistrationService()
             .BuildServiceProvider();
-
             LogerConfig.ConfigureNlog();
-
             _logger.Info("The program is started");
         }
 
         public async Task Start()
-        { 
-            await _serviceProvider.GetService<IRabbitApiService>().SendMessageRabbitService();           
+        {
+            await _serviceProvider.GetService<IRabbitApiService>().SendMessageRabbitService();
         }
     }
 }

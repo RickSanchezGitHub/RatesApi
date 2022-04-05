@@ -1,16 +1,9 @@
 ﻿using Marvelous.Contracts.ExchangeModels;
 using MassTransit;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog;
 using RatesApi.Core;
 using RatesApi.Services.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Authentication;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace RatesApi.Services
@@ -36,12 +29,13 @@ namespace RatesApi.Services
                     h.Password(options.Value.Password);
                 });
             });
+
             _sourse = new CancellationTokenSource(TimeSpan.FromSeconds(options.Value.TimeOut));
 
             _timer = new System.Timers.Timer(options.Value.TimerInterval);
             _timer.AutoReset = true;
             _timer.Enabled = true;
-            _timer.Elapsed += new ElapsedEventHandler(SendMessage);
+            _timer.Elapsed += new ElapsedEventHandler(TimerSendMessage);
             _timer.Start();
 
             _logger.Info("The timer is started");
@@ -53,8 +47,12 @@ namespace RatesApi.Services
 
             try
             {
-                _currencyRates = await _currencyRatesService.GetDataFromFirstSource();               
+                _currencyRates = await _currencyRatesService.GetDataFromFirstSource();
 
+                if (_currencyRates == null)
+                {
+                    _currencyRates = await _currencyRatesService.GetDataFromSecondSource();
+                }
                 await _busControl.Publish<ICurrencyRatesExchangeModel>(new
                 {
                     Rates = _currencyRates
@@ -72,7 +70,7 @@ namespace RatesApi.Services
             }
         }
 
-        private async void SendMessage(Object source, ElapsedEventArgs a)
+        private async void TimerSendMessage(Object source, ElapsedEventArgs a)
         {
             await SendMessageRabbitService();
         }

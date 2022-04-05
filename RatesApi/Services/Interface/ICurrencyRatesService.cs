@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace RatesApi.Services.Interface
+﻿namespace RatesApi.Services.Interface
 {
     public interface ICurrencyRatesService
     {

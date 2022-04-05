@@ -1,9 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using NLog;
-using RatesApi;
-using RatesApi.Core;
-using RatesApi.Services;
-using System.Runtime.InteropServices;
+﻿using RatesApi;
 
 class Program
 {

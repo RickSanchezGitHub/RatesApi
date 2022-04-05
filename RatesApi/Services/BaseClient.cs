@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using NLog;
-using RatesApi.Core;
 using RatesApi.Services.Interface;
 using RestSharp;
 using System.Net;
@@ -23,7 +21,7 @@ namespace RatesApi.Services
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     json = JObject.Parse(response.Content);
-                }            
+                }
                 _logger.Debug("Received a responce from the sourse");
                 return json;
             }

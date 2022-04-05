@@ -1,5 +1,4 @@
-﻿
-namespace RatesApi.Core
+﻿namespace RatesApi.Services.Interface
 {
     public interface IRequiredCurrencies
     {
