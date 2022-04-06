@@ -48,7 +48,6 @@ namespace RatesApi.Services
             try
             {
                 _currencyRates = await _currencyRatesService.GetDataFromFirstSource();
-
                 if (_currencyRates == null)
                 {
                     _currencyRates = await _currencyRatesService.GetDataFromSecondSource();

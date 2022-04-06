@@ -27,25 +27,30 @@ namespace RatesApi.Services
         public async Task<Dictionary<string, decimal>> GetDataFromFirstSource()
         {
             var json = await _baseClient.GetResponseSourse(_firstServiceUrl);
-            var currencies = await CheckJson(json);
-            return currencies;
-        }
-
-        public async Task<Dictionary<string, decimal>> GetDataFromSecondSource()
-        {
-            var json = await _baseClient.GetResponseSourse(_secondServiceUrl);
-            var currencies = await CheckJson(json);
-            return currencies;
-        }
-
-        private async Task<Dictionary<string, decimal>> CheckJson(JObject json)
-        {
             var currencies = new Dictionary<string, decimal>();
 
             if (json != null)
             {
                 _logger.Debug("Received a responce from the sourse");
                 currencies = _converterService.ConvertToDictionaryFirstSource(json);
+            }
+            else
+            {
+                _logger.Error("Could not get data from sources");
+            }
+
+            return currencies;
+        }
+
+        public async Task<Dictionary<string, decimal>> GetDataFromSecondSource()
+        {
+            var json = await _baseClient.GetResponseSourse(_secondServiceUrl);
+            var currencies = new Dictionary<string, decimal>();
+
+            if (json != null)
+            {
+                _logger.Debug("Received a responce from the sourse");
+                currencies = _converterService.ConvertToDictionarySecondSource(json);
             }
             else
             {
