@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using NLog;
 using RatesApi.Services.Interface;
 
@@ -6,10 +7,11 @@ namespace RatesApi.Services
 {
     public class ConverterService : IConverterService
     {
-        private Logger _logger = LogManager.GetCurrentClassLogger();
-        private IRequiredCurrencies _currencies;
-        public ConverterService(IRequiredCurrencies requiredCurrencies)
+        private readonly ILogger<ConverterService> _logger;
+        private readonly IRequiredCurrencies _currencies;
+        public ConverterService(IRequiredCurrencies requiredCurrencies, ILogger<ConverterService> logger)
         {
+            _logger =logger;
             _currencies = requiredCurrencies;
         }
 
@@ -25,13 +27,13 @@ namespace RatesApi.Services
                     CurrencyValue = s.Children().Values("value").FirstOrDefault()
                 }).ToDictionary(k => "USD" + k.CurrencyName, k => Convert.ToDecimal(k.CurrencyValue));
 
-                _logger.Info("Successful conversion of the main sourse");
+                _logger.LogDebug("Successful conversion of the main sourse");
                 var currencys = SelectionCurrency(result);
                 return currencys;
             }
             catch (Exception ex)
             {
-                _logger.Error("Failed to convert the main source", ex);
+                _logger.LogError("an incorrect json file was passed from the main source", ex);
                 throw new NullReferenceException("Object reference not set to an instance of an object.");
             }
         }
@@ -48,12 +50,12 @@ namespace RatesApi.Services
                 }).ToDictionary(k => k.CurrencyName, v => Convert.ToDecimal(v.CurrencyValue));
 
                 var currencys = SelectionCurrency(result);
-                _logger.Debug("Successful conversion of the secondary sourse");
+                _logger.LogDebug("Successful conversion of the secondary sourse");
                 return currencys;
             }
             catch (Exception ex)
             {
-                _logger.Error("Failed to convert the secondary source", ex);
+                _logger.LogError("an incorrect json file was passed from the secondary source", ex);
                 throw new NullReferenceException("Object reference not set to an instance of an object.");
             }
         }
@@ -73,7 +75,7 @@ namespace RatesApi.Services
                     }
                 }
             }
-            _logger.Debug("The final list of currency pairs has been obtained");
+            _logger.LogDebug("The final list of currency pairs has been obtained");
             return reqCurrencies;
         }
     }

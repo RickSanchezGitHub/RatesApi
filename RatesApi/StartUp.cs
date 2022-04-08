@@ -1,17 +1,19 @@
 ﻿using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NLog;
+using NLog.Extensions.Logging;
 using RatesApi.Core;
 using RatesApi.Services;
 using RatesApi.Services.Interface;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace RatesApi
 {
     public class StartUp
     {
         private IServiceProvider _serviceProvider;
-        private Logger _logger = LogManager.GetCurrentClassLogger();
         private IConfiguration _configuration;
 
         public StartUp()
@@ -24,12 +26,15 @@ namespace RatesApi
 
             _serviceProvider = new ServiceCollection()
             .Configure<Settings>(_configuration)
-            .AddLogging()
+            .AddLogging(builder =>
+            {
+                builder.ClearProviders();
+                builder.SetMinimumLevel(LogLevel.Debug);
+                builder.AddNLog(_configuration);
+            })
             .AddMassTransit()
             .RegistrationService()
             .BuildServiceProvider();
-            LogerConfig.ConfigureNlog();
-            _logger.Info("The program is started");
         }
 
         public async Task Start()

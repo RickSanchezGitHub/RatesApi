@@ -1,5 +1,6 @@
 ﻿using Marvelous.Contracts.ExchangeModels;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NLog;
 using RatesApi.Core;
@@ -13,21 +14,18 @@ namespace RatesApi.Services
         private readonly System.Timers.Timer _timer;
         private readonly IBusControl _busControl;
         private readonly CancellationTokenSource _sourse;
-        private ICurrencyRatesService _currencyRatesService;
-        private Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly ICurrencyRatesService _currencyRatesService;
+        private readonly ILogger<RabbitApiService> _logger;
         private Dictionary<string, decimal> _currencyRates;
 
-        public RabbitApiService(ICurrencyRatesService currencyRatesService, IOptions<Settings> options)
+        public RabbitApiService(ICurrencyRatesService currencyRatesService, IOptions<Settings> options, ILogger<RabbitApiService> logger)
         {
+            _logger = logger;
             _currencyRatesService = currencyRatesService;
 
             _busControl = Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
-                cfg.Host(new Uri(options.Value.Host), h =>
-                {
-                    h.Username(options.Value.Login);
-                    h.Password(options.Value.Password);
-                });
+
             });
 
             _sourse = new CancellationTokenSource(TimeSpan.FromSeconds(options.Value.TimeOut));
@@ -38,34 +36,25 @@ namespace RatesApi.Services
             _timer.Elapsed += new ElapsedEventHandler(TimerSendMessage);
             _timer.Start();
 
-            _logger.Info("The timer is started");
+             _busControl.StartAsync(_sourse.Token);
+
+            _logger.LogInformation("The timer is started");
         }
 
         public async Task SendMessageRabbitService()
         {
-            await _busControl.StartAsync(_sourse.Token);
-
             try
-            {
-                _currencyRates = await _currencyRatesService.GetDataFromFirstSource();
-                if (_currencyRates == null)
-                {
-                    _currencyRates = await _currencyRatesService.GetDataFromSecondSource();
-                }
+            {                
                 await _busControl.Publish<ICurrencyRatesExchangeModel>(new
                 {
                     Rates = _currencyRates
                 });
-                _logger.Debug("send message");
+                _logger.LogDebug("send message on Rabbit");
             }
             catch (Exception ex)
             {
-                _logger.Error("Sending the message failed", ex);
+                _logger.LogError("Sending the message failed", ex);
                 throw new Exception();
-            }
-            finally
-            {
-                _busControl.StopAsync();
             }
         }
 

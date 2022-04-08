@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using NLog;
 using RatesApi.Services.Interface;
 using RestSharp;
@@ -8,8 +9,11 @@ namespace RatesApi.Services
 {
     public class BaseClient : IBaseClient
     {
-        private Logger _logger = LogManager.GetCurrentClassLogger();
-
+        private readonly ILogger<BaseClient> _logger;
+        public BaseClient(ILogger<BaseClient> logger)
+        {
+            _logger = logger;
+        }
         public async Task<JObject> GetResponseSourse(string url)
         {
             JObject json = null;
@@ -22,12 +26,12 @@ namespace RatesApi.Services
                 {
                     json = JObject.Parse(response.Content);
                 }
-                _logger.Debug("Received a responce from the sourse");
+                _logger.LogDebug("Received a responce from the sourse");
                 return json;
             }
             catch (Exception ex)
             {
-                _logger.Error("No reseived a responce from the sourse", ex);
+                _logger.LogError("Could not get a response from the source", ex);
                 throw new Exception();
             }
         }
