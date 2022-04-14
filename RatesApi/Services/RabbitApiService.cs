@@ -46,7 +46,7 @@ namespace RatesApi.Services
             try
             {
                 _currencyRates = await _currencyRatesService.GetDataFromFirstSource();
-                await _busControl.Publish<ICurrencyRatesExchangeModel>(new
+                await _busControl.Publish<CurrencyRatesExchangeModel>(new
                 {
                     Rates = _currencyRates
                 });
