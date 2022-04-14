@@ -21,7 +21,8 @@ namespace RatesApi
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables();
+                .AddEnvironmentVariables()
+                .AddInMemoryCollection();
             _configuration = builder.Build();
 
             _serviceProvider = new ServiceCollection()
@@ -34,7 +35,9 @@ namespace RatesApi
             })
             .AddMassTransit()
             .RegistrationService()
-            .BuildServiceProvider();
+            .AddTransient<IConfiguration>(f => _configuration)
+            .BuildServiceProvider();           
+            _serviceProvider.GetService<IInitializeHelper>().InitializeConfig();
         }
 
         public async Task Start()

@@ -25,10 +25,10 @@ namespace RatesApi.Services
             _secondServiceUrl = options.Value.UrlSecondService;
             _currencyBase = options.Value.CurrencyBase;
         }
-        public Task<Dictionary<string, decimal>> ValidCurrensySourse()
-        {
+        //public Task<Dictionary<string, decimal>> ValidCurrensySourse()
+        //{
 
-        }
+        //}
         public async Task<Dictionary<string, decimal>> GetDataFromFirstSource()
         {
             _logger.LogDebug("A request has been sent to get data from first sourse: https://api.currencyapi.com/v3/latest?apikey=Fm5qjdzjiID5C1PsJQEnnrZgpAv3UyjUK1pyxD10");

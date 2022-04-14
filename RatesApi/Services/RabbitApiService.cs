@@ -44,7 +44,8 @@ namespace RatesApi.Services
         public async Task SendMessageRabbitService()
         {
             try
-            {                
+            {
+                _currencyRates = await _currencyRatesService.GetDataFromFirstSource();
                 await _busControl.Publish<ICurrencyRatesExchangeModel>(new
                 {
                     Rates = _currencyRates

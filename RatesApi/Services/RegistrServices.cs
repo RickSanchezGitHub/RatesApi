@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using RatesApi.Core;
 using RatesApi.Services.Interface;
+using System.Configuration;
 
 namespace RatesApi.Services
 {
@@ -13,7 +15,8 @@ namespace RatesApi.Services
             .AddSingleton<IConverterService, ConverterService>()
             .AddSingleton<IRabbitApiService, RabbitApiService>()
             .AddSingleton<IRequiredCurrencies, RequiredCurrencies>()
-            .BuildServiceProvider();
+            .AddSingleton<IRequestHelper, RequestHelper>()
+            .AddTransient<IInitializeHelper, InitializeHelper>();
 
             return service;
         }
