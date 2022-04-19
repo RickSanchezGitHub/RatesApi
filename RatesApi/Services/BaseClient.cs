@@ -14,26 +14,19 @@ namespace RatesApi.Services
         {
             _logger = logger;
         }
-        public async Task<JObject> GetResponseSourse(string url)
+        public async Task<RestResponse> GetResponseSourse(string url)
         {
-            JObject json = null;
-            try
-            {
+                        
                 var client = new RestClient(url);
                 var request = new RestRequest();
                 var response = await client.GetAsync(request);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    json = JObject.Parse(response.Content);
-                }
-                _logger.LogDebug("Received a responce from the sourse");
-                return json;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Could not get a response from the source", ex);
-                throw new Exception();
-            }
+                //if (response.StatusCode == HttpStatusCode.OK)
+                //{
+                //    json = JObject.Parse(response.Content);
+                //}
+                //_logger.LogDebug("Received a responce from the sourse");
+                return response;           
+ 
         }
     }
 }
