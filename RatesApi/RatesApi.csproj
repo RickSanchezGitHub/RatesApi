@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Marvelous.Contracts" Version="1.1.31" />
+    <PackageReference Include="Marvelous.Contracts" Version="1.1.33" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
@@ -56,6 +56,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Core\Models\" />
   </ItemGroup>
 
 </Project>

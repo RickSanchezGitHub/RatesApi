@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Marvelous.Contracts.ExchangeModels;
+using Newtonsoft.Json.Linq;
 
 namespace RatesApi.Services.Interface
 {

@@ -14,7 +14,7 @@ namespace RatesApi.Core
         }
         public List<string> GetCurrenciesPairs()
         {
-            List<string> currencyPairs = new List<string>();
+            var currencyPairs = new List<string>();
             foreach (var item in _currencies)
             {
                 if (item != _currencyBase)

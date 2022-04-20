@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Marvelous.Contracts.ExchangeModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using NLog;
 using Polly;
 using RatesApi.Core;
 using RatesApi.Services.Interface;
@@ -37,31 +37,30 @@ namespace RatesApi.Services
                 {
                     _logger.LogError("Could not get a response from the first source");
                     _logger.LogDebug("A request has been sent to get data from second sourse: http://api.currencylayer.com/live?access_key=ec2e67408bda185f0eafae08db506103");
-                    var response = await _baseClient.GetResponseSourse(_secondServiceUrl);
+                    var response = await _baseClient.GetResponseSourse("http://api.currencylayer.com/live?access_key=ec2e67408bda185f0eafae08db506103");
                     var json = JObject.Parse(response.Content);
                     currencies = await GetDataFromSecondSource(json);
                     return response;
                 });
 
             var retryPolicy = Policy
-                .Handle<InvalidOperationException>()
+                .Handle<Exception>()
                 .RetryAsync(3);
             var policy = fallBackPolicy.WrapAsync(retryPolicy);
             var response = await policy.ExecuteAsync(async () => 
             {
                 _logger.LogDebug("A request has been sent to get data from first sourse: https://api.currencyapi.com/v3/latest?apikey=Fm5qjdzjiID5C1PsJQEnnrZgpAv3UyjUK1pyxD10");
-                var response = await _baseClient.GetResponseSourse(_firstServiceUrl);
+                var response = await _baseClient.GetResponseSourse("http://api.currencylayer.com/live?access_key=ec2e67408bda185f0eafae08db506103");
                 var json = JObject.Parse(response.Content);
-                currencies = await GetDataFromFirstSource(json);
+                currencies = await GetDataFromSecondSource(json);
                 return response;
             });
             return currencies;
         }
-        public async Task<Dictionary<string, decimal>> GetDataFromFirstSource(JObject json)
+        private async Task<Dictionary<string, decimal>> GetDataFromFirstSource(JObject json)
         {
             
             var currencies = new Dictionary<string, decimal>();
-
             if (json != null)
             {
                 _logger.LogDebug("Received a responce from the first sourse: https://api.currencyapi.com/v3/latest?apikey=Fm5qjdzjiID5C1PsJQEnnrZgpAv3UyjUK1pyxD10");
@@ -75,13 +74,12 @@ namespace RatesApi.Services
             {
                 _logger.LogError("Could not get a response from the first source");
             }
-            
+   
             return currencies;
         }
 
-        public async Task<Dictionary<string, decimal>> GetDataFromSecondSource(JObject json)
+        private async Task<Dictionary<string, decimal>> GetDataFromSecondSource(JObject json)
         {
-           
 
             var currencies = new Dictionary<string, decimal>();
 
@@ -98,7 +96,9 @@ namespace RatesApi.Services
             {
                 _logger.LogError("Could not get data from second sources, an empty library will be sent");
             }
+
             return currencies;
         }
+        
     }
 }

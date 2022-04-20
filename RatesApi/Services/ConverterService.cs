@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Marvelous.Contracts.ExchangeModels;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using NLog;
 using RatesApi.Services.Interface;
